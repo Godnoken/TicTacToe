@@ -21,6 +21,18 @@ const displayController = (() => {
 })();
 
 
+(function renderGameBoard() {
+    const gameBoardContainer = document.querySelector(".gameBoard");
+
+    for (i = 0; i < gameBoard.gameBoardArray.length; i++) {
+        const gameBoardTile = document.createElement("div");
+        gameBoardTile.textContent = gameBoard.gameBoardArray[i];
+        gameBoardContainer.appendChild(gameBoardTile);
+    }
+    
+})();
+
+
 const Player = (name) => {
     const getName = () => name;
 
