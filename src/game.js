@@ -26,6 +26,7 @@ const displayController = (() => {
 
     for (i = 0; i < gameBoard.gameBoardArray.length; i++) {
         const gameBoardTile = document.createElement("div");
+        gameBoardTile.classList.add("gameBoardTile");
         gameBoardTile.textContent = gameBoard.gameBoardArray[i];
         gameBoardContainer.appendChild(gameBoardTile);
     }

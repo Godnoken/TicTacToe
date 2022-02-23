@@ -1,0 +1,18 @@
+:root {
+    font-size: 62.5%;
+}
+
+.gameBoard {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    aspect-ratio: 1/1;
+}
+
+.gameBoardTile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: 2px solid black;
+    font-size: 12vw;
+}
