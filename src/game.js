@@ -64,7 +64,7 @@ const gameController = (() => {
         const tile = event.target;
 
         if (tile.textContent !== "O" && tile.textContent !== "X") {
-
+            console.log(currentPlayer.getName())
             if (currentPlayer.getName() === player1.getName()) {
                 tile.textContent = player1.getMarker();
                 gameBoard.gameBoardArray[tile.dataset.index] = player1.getMarker();
@@ -84,7 +84,8 @@ const gameController = (() => {
     })
 
     const getCurrentPlayer = () => {
-        return round % 2 === 1 ? player1 : player2;
+        if (currentPlayer === player1) return currentPlayer = player2;
+        else return currentPlayer = player1;
     };
 
     const isGameOver = () => {
@@ -95,6 +96,7 @@ const gameController = (() => {
 
     const resetGame = () => {
         round = 1;
+        getCurrentPlayer();
         displayController.resetGameBoardVisuals();
         gameBoard.resetGameBoardArray();
     }
