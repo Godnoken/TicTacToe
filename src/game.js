@@ -32,12 +32,14 @@ const gameBoard = (() => {
 const displayController = (() => {
     const gameBoardContainer = document.querySelector(".gameBoard");
 
-    for (i = 0; i < gameBoard.gameBoardArray.length; i++) {
-        const gameBoardTile = document.createElement("div");
-        gameBoardTile.classList.add("gameBoardTile");
-        gameBoardTile.dataset.index = i;
-        gameBoardTile.textContent = gameBoard.gameBoardArray[i];
-        gameBoardContainer.appendChild(gameBoardTile);
+    const createGameBoardVisuals = () => {
+        for (i = 0; i < gameBoard.gameBoardArray.length; i++) {
+            const gameBoardTile = document.createElement("div");
+            gameBoardTile.classList.add("gameBoardTile");
+            gameBoardTile.dataset.index = i;
+            gameBoardTile.textContent = gameBoard.gameBoardArray[i];
+            gameBoardContainer.appendChild(gameBoardTile);
+        }
     }
 
     const resetGameBoardVisuals = () => {
@@ -47,20 +49,22 @@ const displayController = (() => {
     }
 
     return {
+        gameBoardContainer,
+        createGameBoardVisuals,
         resetGameBoardVisuals,
     }
 })();
 
 
 const gameController = (() => {
-    const gameBoardContainer = document.querySelector(".gameBoard");
+    displayController.createGameBoardVisuals();
 
     const player1 = Player("TicToe", "X")
     const player2 = Player("TacToe", "O")
     let round = 1;
     let currentPlayer = player1;
 
-    gameBoardContainer.addEventListener("click", (event) => {
+    displayController.gameBoardContainer.addEventListener("click", (event) => {
         const tile = event.target;
 
         if (tile.textContent !== "O" && tile.textContent !== "X") {
@@ -77,15 +81,13 @@ const gameController = (() => {
             if (isGameOver()) resetGame();
             else {
                 round++;
-                console.log(round)
-                currentPlayer = getCurrentPlayer();
+                getCurrentPlayer();
             }
         }
     })
 
     const getCurrentPlayer = () => {
-        if (currentPlayer === player1) return currentPlayer = player2;
-        else return currentPlayer = player1;
+        currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
     };
 
     const isGameOver = () => {
@@ -105,21 +107,21 @@ const gameController = (() => {
         const GBA = gameBoard.gameBoardArray;
 
         const winConditions = (
-            GBA[0] === mark && GBA[1]  === mark && GBA[2]  === mark
+            GBA[0] === mark && GBA[1] === mark && GBA[2] === mark
             ||
-            GBA[3] === mark && GBA[4]  === mark && GBA[5]  === mark
+            GBA[3] === mark && GBA[4] === mark && GBA[5] === mark
             ||
-            GBA[6] === mark && GBA[7]  === mark && GBA[8]  === mark
+            GBA[6] === mark && GBA[7] === mark && GBA[8] === mark
             ||
-            GBA[0] === mark && GBA[3]  === mark && GBA[6]  === mark
+            GBA[0] === mark && GBA[3] === mark && GBA[6] === mark
             ||
-            GBA[1] === mark && GBA[4]  === mark && GBA[7]  === mark
+            GBA[1] === mark && GBA[4] === mark && GBA[7] === mark
             ||
-            GBA[2] === mark && GBA[5]  === mark && GBA[8]  === mark
+            GBA[2] === mark && GBA[5] === mark && GBA[8] === mark
             ||
-            GBA[0] === mark && GBA[4]  === mark && GBA[8]  === mark
+            GBA[0] === mark && GBA[4] === mark && GBA[8] === mark
             ||
-            GBA[2] === mark && GBA[4]  === mark && GBA[6]  === mark
+            GBA[2] === mark && GBA[4] === mark && GBA[6] === mark
         );
 
         if (winConditions) {
@@ -128,6 +130,6 @@ const gameController = (() => {
     }
 
     return {
-        
+
     }
 })();
