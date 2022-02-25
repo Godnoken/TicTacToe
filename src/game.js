@@ -96,11 +96,18 @@ const gameController = (() => {
         }
     }
 
-    const resetGame = () => {
+    const resetGame = async () => {
+
+        if (isGameOver()) {
+            displayController.gameBoardContainer.style.pointerEvents = "none";
+            await new Promise(resolve => setTimeout(resolve, 1500));
+        }
+        
         round = 1;
         getCurrentPlayer();
         displayController.resetGameBoardVisuals();
         gameBoard.resetGameBoardArray();
+        displayController.gameBoardContainer.style.pointerEvents = "auto";
     }
 
     const checkWinner = (mark) => {
