@@ -120,10 +120,11 @@ const gameController = (() => {
             else displayController.createWinOrDrawWindow("win", currentPlayer.getName());
             displayController.gameBoardContainer.style.pointerEvents = "none";
             await new Promise(resolve => setTimeout(resolve, 2500));
+            getCurrentPlayer();
         }
+        else currentPlayer = player1;
 
         round = 1;
-        getCurrentPlayer();
         displayController.resetGameBoardVisuals();
         gameBoard.resetGameBoardArray();
         displayController.gameBoardContainer.style.pointerEvents = "auto";
@@ -156,6 +157,13 @@ const gameController = (() => {
     }
 
     return {
-
+        resetGame,
     }
 })();
+
+
+
+/* Event Listeners */
+
+const restartButton = document.querySelector(".restartButton");
+restartButton.addEventListener("click", gameController.resetGame);
