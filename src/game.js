@@ -48,10 +48,27 @@ const displayController = (() => {
         }
     }
 
+    const createWinOrDrawWindow = async (result, player) => {
+        const winOrDrawWindow = document.createElement("div");
+        winOrDrawWindow.classList.add("winOrDrawWindow");
+        gameBoardContainer.appendChild(winOrDrawWindow);
+
+        if (result === "draw") {
+            winOrDrawWindow.textContent = "Draw!";
+        }
+        else {
+            winOrDrawWindow.textContent = `${player} wins!`;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 2500));
+        winOrDrawWindow.remove();
+    }
+
     return {
         gameBoardContainer,
         createGameBoardVisuals,
         resetGameBoardVisuals,
+        createWinOrDrawWindow,
     }
 })();
 
@@ -68,7 +85,7 @@ const gameController = (() => {
         const tile = event.target;
 
         if (tile.textContent !== "O" && tile.textContent !== "X") {
-            console.log(currentPlayer.getName())
+
             if (currentPlayer.getName() === player1.getName()) {
                 tile.textContent = player1.getMarker();
                 gameBoard.gameBoardArray[tile.dataset.index] = player1.getMarker();
@@ -99,10 +116,12 @@ const gameController = (() => {
     const resetGame = async () => {
 
         if (isGameOver()) {
+            if (round === 9) displayController.createWinOrDrawWindow("draw");
+            else displayController.createWinOrDrawWindow("win", currentPlayer.getName());
             displayController.gameBoardContainer.style.pointerEvents = "none";
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            await new Promise(resolve => setTimeout(resolve, 2500));
         }
-        
+
         round = 1;
         getCurrentPlayer();
         displayController.resetGameBoardVisuals();

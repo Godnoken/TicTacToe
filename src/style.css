@@ -12,6 +12,7 @@ body {
 }
 
 .gameBoard {
+    position: relative;
     max-height: 80vh;
     max-width: 80vh;
     width: 90%;
@@ -20,6 +21,7 @@ body {
     grid-template-rows: repeat(3, 1fr);
     grid-template-columns: repeat(3, 1fr);
     user-select: none;
+    overflow: hidden;
 }
 
 .gameBoardTile {
@@ -28,4 +30,15 @@ body {
     align-items: center;
     outline: 2px solid black;
     font-size: clamp(2rem, 16vw, 12rem)
+}
+
+.winOrDrawWindow {
+    position: absolute;
+    height: 100%;
+    width: 101%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14vw;
+    backdrop-filter: blur(18px);
 }
