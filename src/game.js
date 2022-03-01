@@ -38,7 +38,6 @@ const displayController = (() => {
             const gameBoardTile = document.createElement("div");
             gameBoardTile.classList.add("gameBoardTile");
             gameBoardTile.dataset.index = i;
-            gameBoardTile.textContent = gameBoard.gameBoardArray[i];
             gameBoardContainer.appendChild(gameBoardTile);
         }
     }
@@ -186,4 +185,9 @@ const gameController = (() => {
 /* Event Listeners */
 
 const restartButton = document.querySelector(".restartButton");
-restartButton.addEventListener("click", gameController.resetGame);
+restartButton.addEventListener("click", () => {
+    gameController.resetGame();
+    restartButton.style.animation = "none";
+    restartButton.offsetWidth;
+    restartButton.style.animation = "moveButton 1s";
+});

@@ -6,7 +6,9 @@ body {
     height: 100vh;
     width: 100vw;
     display: grid;
+    grid-template-rows: 1fr 2fr 1fr;
     margin: 0;
+    background-color: black;
 }
 
 .button {
@@ -16,8 +18,32 @@ body {
     height: 60%;
     font-size: clamp(2.4rem, 3.5vw, 2.7rem);
     border-radius: 0.4rem;
+    border: white solid 1px;
     background-color: black;
     color: white;
+    cursor: pointer;
+    position: relative;
+}
+
+.button:before {
+    content: '';
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    position: absolute;
+    top: -2px;
+    left:-2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 20s linear infinite;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    border-radius: 0.4rem;
+}
+
+.button:hover:before {
+    opacity: 1;
 }
 
 input {
@@ -29,6 +55,8 @@ input {
     text-align: center;
     border: none;
     outline: none;
+    color: gray;
+    background-color: black;
 }
 
 .playerInformation {
@@ -47,9 +75,9 @@ input {
 
 .gameBoard {
     position: relative;
-    max-height: 80vh;
-    max-width: 80vh;
-    width: 90%;
+    max-height: 100%;
+    max-width: 90%;
+    width: 100%;
     aspect-ratio: 1/1;
     display: grid;
     grid-template-rows: repeat(3, 1fr);
@@ -58,14 +86,16 @@ input {
     align-self: center;
     user-select: none;
     overflow: hidden;
+    color: white;
+    background: transparent;
 }
 
 .gameBoardTile {
     display: flex;
     justify-content: center;
     align-items: center;
-    outline: 2px solid black;
-    font-size: clamp(2rem, 16vw, 12rem)
+    outline: 2px solid white;
+    font-size: clamp(2rem, 16vw, 12rem);
 }
 
 .winOrDrawWindow {
@@ -75,8 +105,8 @@ input {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 14vw;
-    backdrop-filter: blur(18px);
+    font-size: clamp(2.6rem, 3.5vw, 4rem);
+    backdrop-filter: blur(12px);
 }
 
 .navigation {
@@ -85,4 +115,16 @@ input {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+}
+
+@keyframes moveButton {
+    0% { transform: translateY(0rem) }
+    50% { transform: translateY(-1rem) }
+    100% { transform: translateY(0rem) }
 }
