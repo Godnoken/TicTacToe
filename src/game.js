@@ -31,6 +31,7 @@ const gameBoard = (() => {
 
 const displayController = (() => {
     const gameBoardContainer = document.querySelector(".gameBoard");
+    const playerInformation = document.querySelector(".playerInformation");
 
     const createGameBoardVisuals = () => {
         for (i = 0; i < gameBoard.gameBoardArray.length; i++) {
@@ -66,6 +67,7 @@ const displayController = (() => {
 
     return {
         gameBoardContainer,
+        playerInformation,
         createGameBoardVisuals,
         resetGameBoardVisuals,
         createWinOrDrawWindow,
@@ -75,30 +77,23 @@ const displayController = (() => {
 
 const gameController = (() => {
     displayController.createGameBoardVisuals();
-
+    const player1Name = document.querySelector(".player1Name");
+    const player1Marker = document.querySelector(".player1Marker");
+    const player2Name = document.querySelector(".player2Name");
+    const player2Marker = document.querySelector(".player2Marker");
+    
     let player1 = Player("TicToe", "X");
     let player2 = Player("TacToe", "O");
     let round = 1;
     let currentPlayer = player1;
 
-    const player1Name = document.querySelector(".player1Name");
-    const player1Marker = document.querySelector(".player1Marker");
-    const player2Name = document.querySelector(".player2Name");
-    const player2Marker = document.querySelector(".player2Marker");
-
     player1Name.addEventListener("change", () => {player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"); currentPlayer = player1});
     player1Marker.addEventListener("change", () => {player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"); currentPlayer = player1});
-    player2Name.addEventListener("change", () => player2 = Player(player2Name.value, player2Marker.value));
-    player2Marker.addEventListener("change", () => player2 = Player(player2Name.value, player2Marker.value));
-
-    const getNewPlayer = (playerNameValue, playerMarkerValue, playerDefaultName, playerDefaultMarker) => {
-        return Player(
-            playerNameValue !== "" ? playerNameValue : playerDefaultName,
-            playerMarkerValue !== "" ? playerMarkerValue : playerDefaultMarker
-            );
-    }
+    player2Name.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
+    player2Marker.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
 
     displayController.gameBoardContainer.addEventListener("click", (event) => {
+        displayController.playerInformation.style.pointerEvents = "none";
         const tile = event.target;
 
         if (tile.textContent !== player1.getMarker() && tile.textContent !== player2.getMarker()) {
@@ -120,6 +115,13 @@ const gameController = (() => {
         }
     })
 
+    const getNewPlayer = (playerNameValue, playerMarkerValue, playerDefaultName, playerDefaultMarker) => {
+        return Player(
+            playerNameValue !== "" ? playerNameValue : playerDefaultName,
+            playerMarkerValue !== "" ? playerMarkerValue : playerDefaultMarker
+            );
+    }
+
     const getCurrentPlayer = () => {
         currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
     };
@@ -131,6 +133,7 @@ const gameController = (() => {
     }
 
     const resetGame = async () => {
+        displayController.playerInformation.style.pointerEvents = "auto";
 
         if (isGameOver()) {
             if (round === 9) displayController.createWinOrDrawWindow("draw");
