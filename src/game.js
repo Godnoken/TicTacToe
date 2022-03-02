@@ -132,10 +132,10 @@ const gameController = (() => {
     player2Name.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
     player2Marker.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
 
-    displayController.gameBoardContainer.addEventListener("click", (event) => {
+    displayController.gameBoardContainer.addEventListener("mousedown", (event) => {
         displayController.playerInformation.style.pointerEvents = "none";
         const tile = event.target;
-
+        
         if (tile.textContent !== player1.getMarker() && tile.textContent !== player2.getMarker()) {
 
             if (currentPlayer === player1) {
