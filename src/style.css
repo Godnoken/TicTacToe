@@ -109,6 +109,7 @@ input {
     overflow: hidden;
     color: white;
     background: transparent;
+    touch-action: none;
 }
 
 .gameBoardTile {
@@ -124,8 +125,23 @@ input {
     align-self: center;
     justify-self: center;
     font-size: clamp(2.6rem, 3.5vw, 6rem);
-    background-color: rgba(0, 0, 0, 75%);
     color: white;
+    border-radius: 0.4rem;
+    transform: translateZ(1px);
+}
+
+.winOrDrawWindow:before {
+    content: '';
+    position: absolute;
+    width: 115%;
+    height: 115%;
+    transform: translate(-7.5%, -7.5%);
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(7px);
+    animation: glowing 20s linear infinite;
+    border-radius: 0.4rem;
 }
 
 .navigation {
