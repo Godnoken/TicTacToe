@@ -127,8 +127,8 @@ const gameController = (() => {
     let round = 1;
     let currentPlayer = player1;
 
-    player1Name.addEventListener("change", () => {player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"); currentPlayer = player1});
-    player1Marker.addEventListener("change", () => {player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"); currentPlayer = player1});
+    player1Name.addEventListener("change", () => player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"));
+    player1Marker.addEventListener("change", () => player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"));
     player2Name.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
     player2Marker.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
 
