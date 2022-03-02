@@ -33,14 +33,14 @@ const displayController = (() => {
     const gameBoardContainer = document.querySelector(".gameBoard");
     const playerInformation = document.querySelector(".playerInformation");
 
-    const createGameBoardVisuals = () => {
+    const createGameBoardVisuals = (() => {
         for (i = 0; i < gameBoard.gameBoardArray.length; i++) {
             const gameBoardTile = document.createElement("div");
             gameBoardTile.classList.add("gameBoardTile");
             gameBoardTile.dataset.index = i;
             gameBoardContainer.appendChild(gameBoardTile);
         }
-    }
+    })();
 
     const resetGameBoardVisuals = () => {
         for (i = 0; i < gameBoard.gameBoardArray.length; i++) {
@@ -64,10 +64,52 @@ const displayController = (() => {
         winOrDrawWindow.remove();
     }
 
+    const createAnimatedBackground = (() => {
+        const svg = document.querySelector("svg");
+        const svgns = "http://www.w3.org/2000/svg";
+
+        const color = randomColorValue();
+        const windowInnerHeight = window.innerHeight;
+        const windowInnerWidth = window.innerWidth;
+        const amountOfRects = windowInnerWidth / 50;
+
+        for (let i = 0; i < amountOfRects; i++) {
+            let newRect = document.createElementNS(svgns, "rect");
+            const x = randomNumber(windowInnerWidth);
+            const y = randomNumber(windowInnerHeight);
+
+            gsap.set(newRect, {
+                x: x,
+                y: y,
+                width: randomNumber(40),
+                height: randomNumber(300),
+                rotation: randomNumber(360),
+                fill: color,
+                stroke: randomColorValue(),
+                strokeWidth: randomNumber(5),
+            });
+
+            gsap.to(newRect, {
+                x: `+=${-windowInnerWidth + randomNumber(windowInnerWidth) * 2}`,
+                y: `+=${-windowInnerHeight + randomNumber(windowInnerHeight) * 2}`,
+                modifiers: {
+                    x: gsap.utils.unitize(x => parseFloat(x) % windowInnerWidth),
+                    y: gsap.utils.unitize(y => parseFloat(y) % windowInnerHeight)
+                },
+                rotation: randomNumber(1000),
+                repeat: -1,
+                yoyo: true,
+                duration: 180,
+                ease: "none",
+            });
+
+            svg.appendChild(newRect);
+        }  
+    })();
+
     return {
         gameBoardContainer,
         playerInformation,
-        createGameBoardVisuals,
         resetGameBoardVisuals,
         createWinOrDrawWindow,
     }
@@ -75,7 +117,6 @@ const displayController = (() => {
 
 
 const gameController = (() => {
-    displayController.createGameBoardVisuals();
     const player1Name = document.querySelector(".player1Name");
     const player1Marker = document.querySelector(".player1Marker");
     const player2Name = document.querySelector(".player2Name");
@@ -97,7 +138,7 @@ const gameController = (() => {
 
         if (tile.textContent !== player1.getMarker() && tile.textContent !== player2.getMarker()) {
 
-            if (currentPlayer.getName() === player1.getName()) {
+            if (currentPlayer === player1) {
                 tile.textContent = player1.getMarker();
                 gameBoard.gameBoardArray[tile.dataset.index] = player1.getMarker();
             }
@@ -110,6 +151,7 @@ const gameController = (() => {
             else {
                 round++;
                 getCurrentPlayer();
+                showCurrentPlayer();
             }
         }
     })
@@ -119,10 +161,25 @@ const gameController = (() => {
             playerNameValue !== "" ? playerNameValue : playerDefaultName,
             playerMarkerValue !== "" ? playerMarkerValue : playerDefaultMarker
             );
-    }
+    };
 
     const getCurrentPlayer = () => {
         currentPlayer === player1 ? currentPlayer = player2 : currentPlayer = player1;
+    };
+
+    const showCurrentPlayer = () => {
+        if (currentPlayer !== player1) {
+            player2Name.classList.add("currentPlayer");
+            player2Marker.classList.add("currentPlayer");
+            player1Name.classList.remove("currentPlayer");
+            player1Marker.classList.remove("currentPlayer");
+        }
+        else {
+            player1Name.classList.add("currentPlayer");
+            player1Marker.classList.add("currentPlayer");
+            player2Name.classList.remove("currentPlayer");
+            player2Marker.classList.remove("currentPlayer");
+        }
     };
 
     const isGameOver = () => {
@@ -146,6 +203,7 @@ const gameController = (() => {
         round = 1;
         displayController.resetGameBoardVisuals();
         gameBoard.resetGameBoardArray();
+        showCurrentPlayer();
         displayController.gameBoardContainer.style.pointerEvents = "auto";
     }
 
@@ -175,12 +233,22 @@ const gameController = (() => {
         }
     }
 
+    showCurrentPlayer();
+
     return {
         resetGame,
     }
 })();
 
+/* Helper Functions */
 
+function randomColorValue() {
+    return `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
+}
+
+function randomNumber(size) {
+    return Math.floor(Math.random() * size)
+}
 
 /* Event Listeners */
 
