@@ -192,8 +192,8 @@ const gameController = (() => {
         displayController.playerInformation.style.pointerEvents = "auto";
 
         if (isGameOver()) {
-            if (round === 9) displayController.createWinOrDrawWindow("draw");
-            else displayController.createWinOrDrawWindow("win", currentPlayer.getName());
+            if (checkWinner(currentPlayer.getMarker())) displayController.createWinOrDrawWindow("win", currentPlayer.getName());
+            else displayController.createWinOrDrawWindow("draw");
             displayController.gameBoardContainer.style.pointerEvents = "none";
             await new Promise(resolve => setTimeout(resolve, 2500));
             getCurrentPlayer();
