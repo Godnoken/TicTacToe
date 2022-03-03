@@ -67,45 +67,80 @@ const displayController = (() => {
     const createAnimatedBackground = (() => {
         const svg = document.querySelector("svg");
         const svgns = "http://www.w3.org/2000/svg";
-
+        const random = gsap.utils.random;
         const color = randomColorValue();
         const windowInnerHeight = window.innerHeight;
         const windowInnerWidth = window.innerWidth;
-        const amountOfRects = windowInnerWidth / 50;
+        const maxAmountOfRectsOnScreen = windowInnerWidth / 50;
+        const amountOfRectsOnScreen = [];
 
-        for (let i = 0; i < amountOfRects; i++) {
-            let newRect = document.createElementNS(svgns, "rect");
-            const x = randomNumber(windowInnerWidth);
-            const y = randomNumber(windowInnerHeight);
+        // Creates and animates new SVG figures and amount is based on viewport width.
+        // Amount is limited by utilizing an array
+        const createSVGFigures = () => {
+            for (let i = amountOfRectsOnScreen.length; i < maxAmountOfRectsOnScreen; i++) {
+                let newRect = document.createElementNS(svgns, "rect");
+                const x = random(0, windowInnerWidth);
+                const y = random(0, windowInnerHeight);
+                const animationDuration = random(30, 140);
+    
+                // With the use of gsap we have randomly created rects moving randomly on the screen
+                const timeline = gsap.timeline();
 
-            gsap.set(newRect, {
-                x: x,
-                y: y,
-                width: randomNumber(40),
-                height: randomNumber(300),
-                rotation: randomNumber(360),
-                fill: color,
-                stroke: randomColorValue(),
-                strokeWidth: randomNumber(5),
-            });
+                // Initializes position, size, color etc
+                timeline.set(newRect, {
+                    x: x,
+                    y: y,
+                    width: random(0, 40),
+                    height: random(0, 300),
+                    rotation: random(0, 360),
+                    fill: color,
+                    stroke: randomColorValue(),
+                    strokeWidth: random(0, 5),
+                    opacity: 0,
+                });
+    
+                // Makes new rects visible after 6 seconds
+                timeline.to(newRect, {
+                    duration: 6,
+                    opacity: 1,
+                })
+    
+                // Rects move to random destination based on viewport and spins
+                timeline.to(newRect, {
+                    x: `+=${-windowInnerWidth + random(0, windowInnerWidth) * 2}`,
+                    y: `+=${-windowInnerHeight + random(0, windowInnerHeight) * 2}`,
+                    rotation: random(0, 1000),
+                    duration: animationDuration,
+                    ease: "none",
+                }, 0);
+    
+                // Sets opacity to 0 after delay and deletes rect on animation completion
+                timeline.to(newRect, {
+                    delay: animationDuration - 6,
+                    opacity: 0,
+                    duration: 6,
+                    onComplete: removeSVGFigures,
+                    onCompleteParams: [newRect]
+                }, 0)
+                
+                svg.appendChild(newRect);
+                amountOfRectsOnScreen.push("");
+            }
+        }
 
-            gsap.to(newRect, {
-                x: `+=${-windowInnerWidth + randomNumber(windowInnerWidth) * 2}`,
-                y: `+=${-windowInnerHeight + randomNumber(windowInnerHeight) * 2}`,
-                modifiers: {
-                    x: gsap.utils.unitize(x => parseFloat(x) % windowInnerWidth),
-                    y: gsap.utils.unitize(y => parseFloat(y) % windowInnerHeight)
-                },
-                rotation: randomNumber(1000),
-                repeat: -1,
-                yoyo: true,
-                duration: 180,
-                ease: "none",
-            });
+        const removeSVGFigures = (rect) => {
+            rect.remove();
+            amountOfRectsOnScreen.pop();
+        }
 
-            svg.appendChild(newRect);
-        }  
+        createSVGFigures();
+
+        setInterval(() => {
+            createSVGFigures();
+        }, 2000)
+
     })();
+
 
     return {
         gameBoardContainer,
@@ -121,7 +156,7 @@ const gameController = (() => {
     const player1Marker = document.querySelector(".player1Marker");
     const player2Name = document.querySelector(".player2Name");
     const player2Marker = document.querySelector(".player2Marker");
-    
+
     let player1 = Player("TicToe", "X");
     let player2 = Player("TacToe", "O");
     let round = 1;
@@ -135,7 +170,7 @@ const gameController = (() => {
     displayController.gameBoardContainer.addEventListener("mousedown", (event) => {
         displayController.playerInformation.style.pointerEvents = "none";
         const tile = event.target;
-        
+
         if (tile.textContent !== player1.getMarker() && tile.textContent !== player2.getMarker()) {
 
             if (currentPlayer === player1) {
@@ -160,7 +195,7 @@ const gameController = (() => {
         return Player(
             playerNameValue !== "" ? playerNameValue : playerDefaultName,
             playerMarkerValue !== "" ? playerMarkerValue : playerDefaultMarker
-            );
+        );
     };
 
     const getCurrentPlayer = () => {
@@ -244,10 +279,6 @@ const gameController = (() => {
 
 function randomColorValue() {
     return `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
-}
-
-function randomNumber(size) {
-    return Math.floor(Math.random() * size)
 }
 
 /* Event Listeners */
