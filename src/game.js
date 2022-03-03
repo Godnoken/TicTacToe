@@ -157,6 +157,7 @@ const gameController = (() => {
     const player2Name = document.querySelector(".player2Name");
     const player2Marker = document.querySelector(".player2Marker");
 
+    let playerOpponent = "player";
     let player1 = Player("TicToe", "X");
     let player2 = Player("TacToe", "O");
     let round = 1;
@@ -272,6 +273,7 @@ const gameController = (() => {
 
     return {
         resetGame,
+        playerOpponent
     }
 })();
 
@@ -289,4 +291,18 @@ restartButton.addEventListener("click", () => {
     restartButton.style.animation = "none";
     restartButton.offsetWidth;
     restartButton.style.animation = "moveButton 1s";
+});
+
+const swithOpponentButton = document.querySelector(".switchOpponentButton");
+swithOpponentButton.addEventListener("click", () => {
+    if (gameController.playerOpponent === "player") {
+        swithOpponentButton.textContent = "Player vs Player";
+        gameController.playerOpponent = "cpu";
+    } else {
+        swithOpponentButton.textContent = "Player vs CPU";
+        gameController.playerOpponent = "player";
+    }
+    swithOpponentButton.style.animation = "none";
+    swithOpponentButton.offsetWidth;
+    swithOpponentButton.style.animation = "moveButton 1s";
 });

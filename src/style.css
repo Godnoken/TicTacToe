@@ -20,7 +20,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: clamp(2.4rem, 3.5vw, 2.7rem);
+    font-size: clamp(1.4rem, 3.5vw, 1.7rem);
     border-radius: 0.4rem;
     border: white solid 1px;
     background-color: black;
