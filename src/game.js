@@ -171,8 +171,6 @@ const gameController = (() => {
     player2Marker.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
     restartButton.addEventListener("click", () => handleRestart());
     swithOpponentButton.addEventListener("click", () => handleSwitchOpponent());
-
-
     displayController.gameBoardContainer.addEventListener("mousedown", (event) => handleMoves(event))
 
     const handleMoves = (event) => {
