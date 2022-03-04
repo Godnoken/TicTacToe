@@ -125,6 +125,10 @@ input {
     font-size: clamp(2rem, 16vw, 12rem);
 }
 
+.gameBoardTileMarker {
+    animation: addMarker 0.4s;
+}
+
 .winOrDrawWindow {
     position: absolute;
     align-self: center;
@@ -188,6 +192,7 @@ a {
     cursor: pointer;
 }
 
+
 @keyframes glowing {
     0% { background-position: 0 0; }
     50% { background-position: 400% 0; }
@@ -198,6 +203,11 @@ a {
     0% { transform: translateY(0rem) }
     50% { transform: translateY(-1rem) }
     100% { transform: translateY(0rem) }
+}
+
+@keyframes addMarker {
+    0% { opacity: 0; transform: scale(0) }
+    100% { opacity: 1; transform: scale(1) }
 }
 
 

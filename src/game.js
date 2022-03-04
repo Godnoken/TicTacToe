@@ -158,13 +158,13 @@ const gameController = (() => {
     const player2Marker = document.querySelector(".player2Marker");
     const restartButton = document.querySelector(".restartButton");
     const swithOpponentButton = document.querySelector(".switchOpponentButton");
-    
+
     let playerOpponent = "player";
     let player1 = Player("TicToe", "X");
     let player2 = Player("TacToe", "O");
     let round = 1;
     let currentPlayer = player1;
-    
+
     player1Name.addEventListener("change", () => player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"));
     player1Marker.addEventListener("change", () => player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"));
     player2Name.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
@@ -178,14 +178,16 @@ const gameController = (() => {
         const tile = event.target;
 
         if (tile.textContent === "") {
-
+            const visualMarker = document.createElement("div");
+            visualMarker.classList.add("gameBoardTileMarker");
+            tile.appendChild(visualMarker);
             if (playerOpponent === "player") {
                 if (currentPlayer === player1) {
-                    tile.textContent = player1.getMarker();
+                    visualMarker.textContent = player1.getMarker();
                     gameBoard.gameBoardArray[tile.dataset.index] = player1.getMarker();
                 }
                 else {
-                    tile.textContent = player2.getMarker();
+                    visualMarker.textContent = player2.getMarker();
                     gameBoard.gameBoardArray[tile.dataset.index] = player2.getMarker();
                 }
 
@@ -198,7 +200,7 @@ const gameController = (() => {
             }
             else if (playerOpponent === "cpu") {
                 if (currentPlayer === player1) {
-                    tile.textContent = player1.getMarker();
+                    visualMarker.textContent = player1.getMarker();
                     gameBoard.gameBoardArray[tile.dataset.index] = player1.getMarker();
 
                     if (isGameOver()) {
@@ -262,9 +264,11 @@ const gameController = (() => {
     const makeCPUMove = () => {
         const emptyTiles = getEmptyTiles();
         const cpuMove = emptyTiles[Math.floor(gsap.utils.random(0, emptyTiles.length))];
-        displayController.gameBoardContainer.children[cpuMove].textContent = player2.getMarker();
+        const visualMarker = document.createElement("div");
+        visualMarker.classList.add("gameBoardTileMarker");
+        displayController.gameBoardContainer.children[cpuMove].appendChild(visualMarker);
+        visualMarker.textContent = player2.getMarker();
         gameBoard.gameBoardArray[cpuMove] = player2.getMarker();
-
     }
 
     const getNewPlayer = (playerNameValue, playerMarkerValue, playerDefaultName, playerDefaultMarker) => {
