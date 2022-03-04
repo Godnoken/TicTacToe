@@ -51,7 +51,7 @@ const displayController = (() => {
     const createWinOrDrawWindow = async (result, player) => {
         const winOrDrawWindow = document.createElement("div");
         winOrDrawWindow.classList.add("winOrDrawWindow");
-        document.body.appendChild(winOrDrawWindow);
+        document.querySelector(".appContainer").appendChild(winOrDrawWindow);
 
         if (result === "draw") {
             winOrDrawWindow.textContent = "Draw!";
