@@ -82,7 +82,7 @@ const displayController = (() => {
                 const x = random(0, windowInnerWidth);
                 const y = random(0, windowInnerHeight);
                 const animationDuration = random(30, 140);
-    
+
                 // With the use of gsap we have randomly created rects moving randomly on the screen
                 const timeline = gsap.timeline();
 
@@ -98,13 +98,13 @@ const displayController = (() => {
                     strokeWidth: random(0, 5),
                     opacity: 0,
                 });
-    
+
                 // Makes new rects visible after 6 seconds
                 timeline.to(newRect, {
                     duration: 6,
                     opacity: 1,
                 })
-    
+
                 // Rects move to random destination based on viewport and spins
                 timeline.to(newRect, {
                     x: `+=${-windowInnerWidth + random(0, windowInnerWidth) * 2}`,
@@ -113,7 +113,7 @@ const displayController = (() => {
                     duration: animationDuration,
                     ease: "none",
                 }, 0);
-    
+
                 // Sets opacity to 0 after delay and deletes rect on animation completion
                 timeline.to(newRect, {
                     delay: animationDuration - 6,
@@ -122,7 +122,7 @@ const displayController = (() => {
                     onComplete: removeSVGFigures,
                     onCompleteParams: [newRect]
                 }, 0)
-                
+
                 svg.appendChild(newRect);
                 amountOfRectsOnScreen.push("");
             }
@@ -156,41 +156,118 @@ const gameController = (() => {
     const player1Marker = document.querySelector(".player1Marker");
     const player2Name = document.querySelector(".player2Name");
     const player2Marker = document.querySelector(".player2Marker");
-
+    const restartButton = document.querySelector(".restartButton");
+    const swithOpponentButton = document.querySelector(".switchOpponentButton");
+    
     let playerOpponent = "player";
     let player1 = Player("TicToe", "X");
     let player2 = Player("TacToe", "O");
     let round = 1;
     let currentPlayer = player1;
-
+    
     player1Name.addEventListener("change", () => player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"));
     player1Marker.addEventListener("change", () => player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"));
     player2Name.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
     player2Marker.addEventListener("change", () => player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"));
+    restartButton.addEventListener("click", () => handleRestart());
+    swithOpponentButton.addEventListener("click", () => handleSwitchOpponent());
 
-    displayController.gameBoardContainer.addEventListener("mousedown", (event) => {
+
+    displayController.gameBoardContainer.addEventListener("mousedown", (event) => handleMoves(event))
+
+    const handleMoves = (event) => {
         displayController.playerInformation.style.pointerEvents = "none";
         const tile = event.target;
 
-        if (tile.textContent !== player1.getMarker() && tile.textContent !== player2.getMarker()) {
+        if (tile.textContent === "") {
 
-            if (currentPlayer === player1) {
-                tile.textContent = player1.getMarker();
-                gameBoard.gameBoardArray[tile.dataset.index] = player1.getMarker();
-            }
-            else {
-                tile.textContent = player2.getMarker();
-                gameBoard.gameBoardArray[tile.dataset.index] = player2.getMarker();
-            }
+            if (playerOpponent === "player") {
+                if (currentPlayer === player1) {
+                    tile.textContent = player1.getMarker();
+                    gameBoard.gameBoardArray[tile.dataset.index] = player1.getMarker();
+                }
+                else {
+                    tile.textContent = player2.getMarker();
+                    gameBoard.gameBoardArray[tile.dataset.index] = player2.getMarker();
+                }
 
-            if (isGameOver()) resetGame();
-            else {
-                round++;
-                getCurrentPlayer();
-                showCurrentPlayer();
+                if (isGameOver()) resetGame();
+                else {
+                    round++;
+                    getCurrentPlayer();
+                    showCurrentPlayer();
+                }
+            }
+            else if (playerOpponent === "cpu") {
+                if (currentPlayer === player1) {
+                    tile.textContent = player1.getMarker();
+                    gameBoard.gameBoardArray[tile.dataset.index] = player1.getMarker();
+
+                    if (isGameOver()) {
+                        (async () => {
+                            resetGame();
+                            await new Promise(resolve => setTimeout(resolve, 2500));
+                            makeCPUMove();
+                            startNextRound();
+                        })();
+                    }
+                    else {
+                        (async () => {
+                            startNextRound();
+                            await new Promise(resolve => setTimeout(resolve, 500));
+                            makeCPUMove();
+                            if (isGameOver()) resetGame();
+                            else startNextRound();
+                        })();
+                    }
+                }
             }
         }
-    })
+    }
+
+    const handleRestart = () => {
+        resetGame();
+        restartButton.style.animation = "none";
+        restartButton.offsetWidth;
+        restartButton.style.animation = "moveButton 1s";
+    }
+
+    const handleSwitchOpponent = () => {
+        if (playerOpponent === "player") {
+            swithOpponentButton.textContent = "Player vs Player";
+            playerOpponent = "cpu";
+        } else {
+            swithOpponentButton.textContent = "Player vs CPU";
+            playerOpponent = "player";
+        }
+        swithOpponentButton.style.animation = "none";
+        swithOpponentButton.offsetWidth;
+        swithOpponentButton.style.animation = "moveButton 1s";
+    }
+
+    const startNextRound = () => {
+        round++;
+        getCurrentPlayer();
+        showCurrentPlayer();
+    }
+
+    const getEmptyTiles = () => {
+        const emptyTiles = [];
+        for (let i = 0; i < gameBoard.gameBoardArray.length; i++) {
+            if (gameBoard.gameBoardArray[i] === "") {
+                emptyTiles.push(i);
+            }
+        }
+        return emptyTiles;
+    }
+
+    const makeCPUMove = () => {
+        const emptyTiles = getEmptyTiles();
+        const cpuMove = emptyTiles[Math.floor(gsap.utils.random(0, emptyTiles.length))];
+        displayController.gameBoardContainer.children[cpuMove].textContent = player2.getMarker();
+        gameBoard.gameBoardArray[cpuMove] = player2.getMarker();
+
+    }
 
     const getNewPlayer = (playerNameValue, playerMarkerValue, playerDefaultName, playerDefaultMarker) => {
         return Player(
@@ -277,32 +354,10 @@ const gameController = (() => {
     }
 })();
 
+
+
 /* Helper Functions */
 
 function randomColorValue() {
     return `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
 }
-
-/* Event Listeners */
-
-const restartButton = document.querySelector(".restartButton");
-restartButton.addEventListener("click", () => {
-    gameController.resetGame();
-    restartButton.style.animation = "none";
-    restartButton.offsetWidth;
-    restartButton.style.animation = "moveButton 1s";
-});
-
-const swithOpponentButton = document.querySelector(".switchOpponentButton");
-swithOpponentButton.addEventListener("click", () => {
-    if (gameController.playerOpponent === "player") {
-        swithOpponentButton.textContent = "Player vs Player";
-        gameController.playerOpponent = "cpu";
-    } else {
-        swithOpponentButton.textContent = "Player vs CPU";
-        gameController.playerOpponent = "player";
-    }
-    swithOpponentButton.style.animation = "none";
-    swithOpponentButton.offsetWidth;
-    swithOpponentButton.style.animation = "moveButton 1s";
-});
