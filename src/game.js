@@ -364,7 +364,7 @@ const gameController = (() => {
                 
                 board[i] = player2.getMarker();
 
-                let score = minimax(board, 0, false);
+                let score = minimax(board, 0, -Infinity, Infinity, false);
 
                 board[i] = "";
 
@@ -378,7 +378,7 @@ const gameController = (() => {
         return bestMove;
     }
 
-    const minimax = (board, depth, isMaximizingPlayer) => {
+    const minimax = (board, depth, alpha, beta, isMaximizingPlayer) => {
 
         if (checkWinner(player1.getMarker()) === player1.getMarker()) return -10;
         else if (checkWinner(player2.getMarker()) === player2.getMarker()) return 10;
@@ -393,11 +393,14 @@ const gameController = (() => {
 
                     board[i] = player2.getMarker();
                     
-                    let score = minimax(board, depth + 1, false);
+                    let score = minimax(board, depth + 1, alpha, beta, false);
 
                     board[i] = "";
 
                     bestScore = Math.max(score, bestScore);
+
+                    alpha = Math.max(alpha, bestScore);
+                    if (beta <= alpha) break;
                 }
             }
             return bestScore;
@@ -411,11 +414,14 @@ const gameController = (() => {
 
                     board[i] = player1.getMarker();
 
-                    let score = minimax(board, depth + 1, true);
+                    let score = minimax(board, depth + 1, alpha, beta, true);
 
                     board[i] = "";
 
                     bestScore = Math.min(score, bestScore);
+                    
+                    beta = Math.min(beta, bestScore);
+                    if (beta <= alpha) break;
                 }
             }
             return bestScore;
