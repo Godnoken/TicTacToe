@@ -190,7 +190,7 @@ const gameController = (() => {
                     visualMarker.textContent = player2.getMarker();
                     gameBoard.gameBoardArray[tile.dataset.index] = player2.getMarker();
                 }
-
+                
                 if (isGameOver()) resetGame();
                 else {
                     round++;
@@ -263,7 +263,8 @@ const gameController = (() => {
 
     const makeCPUMove = () => {
         const emptyTiles = getEmptyTiles();
-        const cpuMove = emptyTiles[Math.floor(gsap.utils.random(0, emptyTiles.length))];
+        //const cpuMove = emptyTiles[Math.floor(gsap.utils.random(0, emptyTiles.length))];
+        const cpuMove = findBestMove(gameBoard.gameBoardArray);
         const visualMarker = document.createElement("div");
         visualMarker.classList.add("gameBoardTileMarker");
         displayController.gameBoardContainer.children[cpuMove].appendChild(visualMarker);
@@ -298,7 +299,10 @@ const gameController = (() => {
     };
 
     const isGameOver = () => {
-        if (round === 9 || checkWinner(currentPlayer.getMarker())) {
+        if (checkWinner(currentPlayer.getMarker()) === player1.getMarker()
+        || checkWinner(currentPlayer.getMarker()) === player2.getMarker()
+        || checkWinner() === "draw"
+        ) {
             return true;
         }
     }
@@ -307,7 +311,7 @@ const gameController = (() => {
         displayController.playerInformation.style.pointerEvents = "auto";
 
         if (isGameOver()) {
-            if (checkWinner(currentPlayer.getMarker())) displayController.createWinOrDrawWindow("win", currentPlayer.getName());
+            if (checkWinner(currentPlayer.getMarker()) === currentPlayer.getMarker()) displayController.createWinOrDrawWindow("win", currentPlayer.getName());
             else displayController.createWinOrDrawWindow("draw");
             displayController.gameBoardContainer.style.pointerEvents = "none";
             await new Promise(resolve => setTimeout(resolve, 2500));
@@ -344,7 +348,77 @@ const gameController = (() => {
         );
 
         if (winConditions) {
-            return true;
+            if (mark === player1.getMarker()) return player1.getMarker();
+            else if (mark === player2.getMarker()) return player2.getMarker();
+        } else if (GBA.filter(tile => tile === "").length === 0) {
+            return "draw";
+        }
+    }
+
+    const findBestMove = (board) => {
+        let bestScore = -Infinity;
+        let bestMove;
+
+        for (let i = 0; i < 9; i++) {
+            if (board[i] === "") {
+                
+                board[i] = player2.getMarker();
+
+                let score = minimax(board, 0, false);
+
+                board[i] = "";
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = i;
+                }
+            }
+        }
+
+        return bestMove;
+    }
+
+    const minimax = (board, depth, isMaximizingPlayer) => {
+
+        if (checkWinner(player1.getMarker()) === player1.getMarker()) return -10;
+        else if (checkWinner(player2.getMarker()) === player2.getMarker()) return 10;
+        else if (checkWinner() === "draw") return 0;
+
+        if (isMaximizingPlayer) {
+            let bestScore = -Infinity;
+
+            for (let i = 0; i < 9; i++) {
+                
+                if (board[i] === "") {
+
+                    board[i] = player2.getMarker();
+                    
+                    let score = minimax(board, depth + 1, false);
+
+                    board[i] = "";
+
+                    bestScore = Math.max(score, bestScore);
+                }
+            }
+            return bestScore;
+        }
+        else {
+            let bestScore = Infinity;
+            
+            for (let i = 0; i < 9; i++) {
+
+                if (board[i] === "") {
+
+                    board[i] = player1.getMarker();
+
+                    let score = minimax(board, depth + 1, true);
+
+                    board[i] = "";
+
+                    bestScore = Math.min(score, bestScore);
+                }
+            }
+            return bestScore;
         }
     }
 
