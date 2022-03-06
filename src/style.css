@@ -39,11 +39,12 @@ body {
     cursor: pointer;
     position: relative;
     font-family: inherit;
+    z-index: 1;
 }
 
 .button:before {
     content: '';
-    background: linear-gradient(45deg, #8d0606, #b95e13, #a19f18, #4aad23, #17c5a8, #1230c5, #6810c7, #c4169e, #c00b0b);
+    background: linear-gradient(45deg, #8d0606, #b95e13, #a19f18, #4aad23, #17c5a8, #1230c5, #6810c7, #c4169e, #8d0606);
     position: absolute;
     top: -2px;
     left:-2px;
@@ -84,6 +85,7 @@ input {
 }
 
 .playerInputContainer {
+    position: relative;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -114,7 +116,6 @@ input {
     overflow: hidden;
     color: white;
     background: transparent;
-    touch-action: none;
 }
 
 .gameBoardTile {
@@ -151,6 +152,21 @@ input {
     filter: blur(7px);
     animation: glowing 20s linear infinite;
     border-radius: 0.4rem;
+}
+
+.botDifficultyContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: clamp(16rem, 35vw, 30rem);
+    height: 45vh;
+    justify-self: center;
+    align-self: center;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: black;
+    border: white solid 1px;
+    border-radius: 4px
 }
 
 .navigation {
@@ -208,6 +224,11 @@ a {
 @keyframes addMarker {
     0% { opacity: 0; transform: scale(0) }
     100% { opacity: 1; transform: scale(1) }
+}
+
+@keyframes animateDifficultyContainer {
+    0% { opacity: 1; transform: scale(1) }
+    100% { opacity: 0; transform: scale(0) }
 }
 
 

@@ -30,6 +30,7 @@ const gameBoard = (() => {
 
 
 const displayController = (() => {
+    const appContainer = document.querySelector(".appContainer");
     const gameBoardContainer = document.querySelector(".gameBoard");
     const playerInformation = document.querySelector(".playerInformation");
 
@@ -62,6 +63,57 @@ const displayController = (() => {
 
         await new Promise(resolve => setTimeout(resolve, 2500));
         winOrDrawWindow.remove();
+    }
+
+    const createBotDifficultiesContainer = () => {
+        const botDifficultyContainer = document.createElement("div");
+        const easyBot = document.createElement("button");
+        const beatableBot = document.createElement("button");
+        const hardBot = document.createElement("button");
+        const unbeatableBot = document.createElement("button");
+
+        botDifficultyContainer.classList.add("botDifficultyContainer");
+        easyBot.classList.add("button");
+        beatableBot.classList.add("button");
+        hardBot.classList.add("button");
+        unbeatableBot.classList.add("button");
+
+        easyBot.textContent = "Easy";
+        beatableBot.textContent = "Beatable";
+        hardBot.textContent = "Hard";
+        unbeatableBot.textContent = "Impossible";
+
+        easyBot.addEventListener("click", () => { useAnimation(easyBot, "moveButton 1s"); gameController.setCpuDifficulty(0); removeBotDifficultiesContainer() });
+        beatableBot.addEventListener("click", () => { useAnimation(beatableBot, "moveButton 1s"); gameController.setCpuDifficulty(80); removeBotDifficultiesContainer() });
+        hardBot.addEventListener("click", () => { useAnimation(hardBot, "moveButton 1s"); gameController.setCpuDifficulty(95); removeBotDifficultiesContainer() });
+        unbeatableBot.addEventListener("click", () => { useAnimation(unbeatableBot, "moveButton 1s"); gameController.setCpuDifficulty(100); removeBotDifficultiesContainer() });
+
+        gameBoardContainer.style.pointerEvents = "none";
+
+        appContainer.appendChild(botDifficultyContainer);
+        botDifficultyContainer.appendChild(easyBot);
+        botDifficultyContainer.appendChild(beatableBot);
+        botDifficultyContainer.appendChild(hardBot);
+        botDifficultyContainer.appendChild(unbeatableBot);
+        useAnimation(botDifficultyContainer, "animateDifficultyContainer 0.5s reverse");
+    }
+
+    const removeBotDifficultiesContainer = () => {
+        const container = document.querySelector(".botDifficultyContainer");
+
+        setTimeout(() => {
+            useAnimation(container, "animateDifficultyContainer 0.5s");
+            setTimeout(() => {
+                container.remove();
+                gameBoardContainer.style.pointerEvents = "auto";
+            }, 500);
+        }, 500);
+    }
+
+    const useAnimation = (element, animation) => {
+        element.style.animation = "none";
+        element.offsetWidth;
+        element.style.animation = animation;
     }
 
     const createAnimatedBackground = (() => {
@@ -147,6 +199,9 @@ const displayController = (() => {
         playerInformation,
         resetGameBoardVisuals,
         createWinOrDrawWindow,
+        createBotDifficultiesContainer,
+        useAnimation,
+        removeBotDifficultiesContainer
     }
 })();
 
@@ -164,6 +219,7 @@ const gameController = (() => {
     let player2 = Player("TacToe", "O");
     let round = 1;
     let currentPlayer = player1;
+    let aiDifficulty = 0;
 
     player1Name.addEventListener("change", () => player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"));
     player1Marker.addEventListener("change", () => player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"));
@@ -190,7 +246,7 @@ const gameController = (() => {
                     visualMarker.textContent = player2.getMarker();
                     gameBoard.gameBoardArray[tile.dataset.index] = player2.getMarker();
                 }
-                
+
                 if (isGameOver()) resetGame();
                 else {
                     round++;
@@ -227,28 +283,31 @@ const gameController = (() => {
 
     const handleRestart = () => {
         resetGame();
-        restartButton.style.animation = "none";
-        restartButton.offsetWidth;
-        restartButton.style.animation = "moveButton 1s";
+        displayController.useAnimation(restartButton, "moveButton 1s");
+        if (playerOpponent === "cpu" && document.querySelector(".botDifficultyContainer") === null) displayController.createBotDifficultiesContainer();
     }
 
     const handleSwitchOpponent = () => {
         if (playerOpponent === "player") {
             swithOpponentButton.textContent = "Player vs Player";
             playerOpponent = "cpu";
+            if (document.querySelector(".botDifficultyContainer") === null) displayController.createBotDifficultiesContainer();
         } else {
             swithOpponentButton.textContent = "Player vs CPU";
             playerOpponent = "player";
+            if (document.querySelector(".botDifficultyContainer") !== null) displayController.removeBotDifficultiesContainer();
         }
-        swithOpponentButton.style.animation = "none";
-        swithOpponentButton.offsetWidth;
-        swithOpponentButton.style.animation = "moveButton 1s";
+        displayController.useAnimation(swithOpponentButton, "moveButton 1s");
     }
 
     const startNextRound = () => {
         round++;
         getCurrentPlayer();
         showCurrentPlayer();
+    }
+
+    const setCpuDifficulty = (difficulty) => {
+        aiDifficulty = difficulty;
     }
 
     const getEmptyTiles = () => {
@@ -262,9 +321,16 @@ const gameController = (() => {
     }
 
     const makeCPUMove = () => {
+        let cpuMove;
         const emptyTiles = getEmptyTiles();
-        //const cpuMove = emptyTiles[Math.floor(gsap.utils.random(0, emptyTiles.length))];
-        const cpuMove = findBestMove(gameBoard.gameBoardArray);
+
+        if (Math.floor(gsap.utils.random(0, 101) <= aiDifficulty)) {
+            cpuMove = findBestMove(gameBoard.gameBoardArray);
+        }
+        else {
+            cpuMove = emptyTiles[Math.floor(gsap.utils.random(0, emptyTiles.length))];
+        }
+
         const visualMarker = document.createElement("div");
         visualMarker.classList.add("gameBoardTileMarker");
         displayController.gameBoardContainer.children[cpuMove].appendChild(visualMarker);
@@ -300,8 +366,8 @@ const gameController = (() => {
 
     const isGameOver = () => {
         if (checkWinner(currentPlayer.getMarker()) === player1.getMarker()
-        || checkWinner(currentPlayer.getMarker()) === player2.getMarker()
-        || checkWinner() === "draw"
+            || checkWinner(currentPlayer.getMarker()) === player2.getMarker()
+            || checkWinner() === "draw"
         ) {
             return true;
         }
@@ -361,7 +427,7 @@ const gameController = (() => {
 
         for (let i = 0; i < 9; i++) {
             if (board[i] === "") {
-                
+
                 board[i] = player2.getMarker();
 
                 let score = minimax(board, 0, -Infinity, Infinity, false);
@@ -388,11 +454,11 @@ const gameController = (() => {
             let bestScore = -Infinity;
 
             for (let i = 0; i < 9; i++) {
-                
+
                 if (board[i] === "") {
 
                     board[i] = player2.getMarker();
-                    
+
                     let score = minimax(board, depth + 1, alpha, beta, false);
 
                     board[i] = "";
@@ -407,7 +473,7 @@ const gameController = (() => {
         }
         else {
             let bestScore = Infinity;
-            
+
             for (let i = 0; i < 9; i++) {
 
                 if (board[i] === "") {
@@ -419,7 +485,7 @@ const gameController = (() => {
                     board[i] = "";
 
                     bestScore = Math.min(score, bestScore);
-                    
+
                     beta = Math.min(beta, bestScore);
                     if (beta <= alpha) break;
                 }
@@ -432,7 +498,8 @@ const gameController = (() => {
 
     return {
         resetGame,
-        playerOpponent
+        playerOpponent,
+        setCpuDifficulty
     }
 })();
 
