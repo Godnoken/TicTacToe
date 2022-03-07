@@ -217,14 +217,13 @@ const gameController = (() => {
     let playerOpponent = "player";
     let player1 = Player("TicToe", "X");
     let player2 = Player("TacToe", "O");
-    player1Name.dataset.currentplayer = "true";
     let currentPlayer = player1;
-    let aiDifficulty = 0;
+    let cpuDifficulty = 0;
 
-    player1Name.addEventListener("change", () => { player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"); getCurrentPlayer()});
-    player1Marker.addEventListener("input", () => {player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"); getCurrentPlayer()});
-    player2Name.addEventListener("change", () => {player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"); getCurrentPlayer()});
-    player2Marker.addEventListener("input", () => {player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"); getCurrentPlayer()});
+    player1Name.addEventListener("change", () => { player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"); getCurrentPlayer() });
+    player1Marker.addEventListener("input", () => { player1 = getNewPlayer(player1Name.value, player1Marker.value, "TicToe", "X"); getCurrentPlayer() });
+    player2Name.addEventListener("change", () => { player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"); getCurrentPlayer() });
+    player2Marker.addEventListener("input", () => { player2 = getNewPlayer(player2Name.value, player2Marker.value, "TacToe", "O"); getCurrentPlayer() });
     restartButton.addEventListener("click", () => handleRestart());
     swithOpponentButton.addEventListener("click", () => handleSwitchOpponent());
     displayController.gameBoardContainer.addEventListener("mousedown", (event) => handleMoves(event))
@@ -267,8 +266,10 @@ const gameController = (() => {
                 else {
                     (async () => {
                         startNextRound();
+                        displayController.gameBoardContainer.style.pointerEvents = "none";
                         await new Promise(resolve => setTimeout(resolve, 500));
                         makeCPUMove();
+                        displayController.gameBoardContainer.style.pointerEvents = "auto";
                         if (isGameOver()) resetGame();
                         else startNextRound();
                     })();
@@ -303,10 +304,6 @@ const gameController = (() => {
         showCurrentPlayer();
     }
 
-    const setCpuDifficulty = (difficulty) => {
-        aiDifficulty = difficulty;
-    }
-
     const getEmptyTiles = () => {
         const emptyTiles = [];
         for (let i = 0; i < gameBoard.gameBoardArray.length; i++) {
@@ -321,7 +318,7 @@ const gameController = (() => {
         let cpuMove;
         const emptyTiles = getEmptyTiles();
 
-        if (Math.floor(gsap.utils.random(0, 101) <= aiDifficulty)) {
+        if (Math.floor(gsap.utils.random(0, 101) <= cpuDifficulty)) {
             cpuMove = findBestMove(gameBoard.gameBoardArray);
         }
         else {
@@ -375,7 +372,6 @@ const gameController = (() => {
     }
 
     const resetGame = async () => {
-        displayController.playerInformation.style.pointerEvents = "auto";
 
         if (isGameOver()) {
             if (checkWinner(currentPlayer.getMarker()) === currentPlayer.getMarker()) displayController.createWinOrDrawWindow("win", currentPlayer.getName());
@@ -390,6 +386,7 @@ const gameController = (() => {
         gameBoard.resetGameBoardArray();
         showCurrentPlayer();
         displayController.gameBoardContainer.style.pointerEvents = "auto";
+        displayController.playerInformation.style.pointerEvents = "auto";
     }
 
     const checkWinner = (mark) => {
@@ -420,6 +417,10 @@ const gameController = (() => {
             return "draw";
         }
     }
+
+    const setCpuDifficulty = (difficulty) => {
+        cpuDifficulty = difficulty;
+    };
 
     const findBestMove = (board) => {
         let bestScore = -Infinity;
