@@ -2,6 +2,7 @@ html {
     font-size: 62.5%;
     font-family: 'Rajdhani', sans-serif;
     overflow: hidden;
+    user-select: none;
 }
 
 body {
@@ -112,7 +113,6 @@ input {
     grid-template-columns: repeat(3, 1fr);
     justify-self: center;
     align-self: center;
-    user-select: none;
     overflow: hidden;
     color: white;
     background: transparent;
@@ -183,7 +183,6 @@ input {
     font-size: 1rem;
     opacity: 0.4;
     transition-duration: 0.4s;
-    user-select: none;
 }
 
 #codeWriter:hover {
