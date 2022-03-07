@@ -217,7 +217,6 @@ const gameController = (() => {
     let playerOpponent = "player";
     let player1 = Player("TicToe", "X");
     let player2 = Player("TacToe", "O");
-    let round = 1;
     let currentPlayer = player1;
     let aiDifficulty = 0;
 
@@ -249,9 +248,7 @@ const gameController = (() => {
 
                 if (isGameOver()) resetGame();
                 else {
-                    round++;
-                    getCurrentPlayer();
-                    showCurrentPlayer();
+                    startNextRound();
                 }
             }
             else if (playerOpponent === "cpu") {
@@ -301,7 +298,6 @@ const gameController = (() => {
     }
 
     const startNextRound = () => {
-        round++;
         getCurrentPlayer();
         showCurrentPlayer();
     }
@@ -385,7 +381,6 @@ const gameController = (() => {
         }
         else currentPlayer = player1;
 
-        round = 1;
         displayController.resetGameBoardVisuals();
         gameBoard.resetGameBoardArray();
         showCurrentPlayer();
