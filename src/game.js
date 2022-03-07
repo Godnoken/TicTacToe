@@ -318,6 +318,8 @@ const gameController = (() => {
         let cpuMove;
         const emptyTiles = getEmptyTiles();
 
+        // If cpuDifficulty threshold is greater than a random number between 0, 100
+        // CPU will make the best possible move. If not, CPU chooses a random available tile as its move
         if (Math.floor(gsap.utils.random(0, 101) <= cpuDifficulty)) {
             cpuMove = findBestMove(gameBoard.gameBoardArray);
         }
@@ -422,6 +424,10 @@ const gameController = (() => {
         cpuDifficulty = difficulty;
     };
 
+    // When calling findBestMove, the function will look through the gameboard's empty tiles
+    // and utilize the minimax algorithm to find out ALL the possible ways this game could go.
+    // It returns the best possible move it can make, and in the case of a tictactoe game,
+    // this makes the bot impossible to beat, although you can draw the game and cheer for that.
     const findBestMove = (board) => {
         let bestScore = -Infinity;
         let bestMove;
@@ -466,6 +472,10 @@ const gameController = (() => {
 
                     bestScore = Math.max(score, bestScore);
 
+                    // This is alpha-beta pruning. It greatly reduces the amount of times
+                    // minimax has to recursively call itself, by ignoring "branches" of the "tree"
+                    // because it has already found the best possible score for that "branch",
+                    // thus improving the algorithm's performance.
                     alpha = Math.max(alpha, bestScore);
                     if (beta <= alpha) break;
                 }
@@ -499,7 +509,6 @@ const gameController = (() => {
 
     return {
         resetGame,
-        playerOpponent,
         setCpuDifficulty
     }
 })();
