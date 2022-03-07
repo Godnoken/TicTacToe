@@ -346,7 +346,7 @@ const gameController = (() => {
     };
 
     const getCurrentPlayer = () => {
-        player1Name.className === "currentPlayer" ? currentPlayer = player1 : currentPlayer = player2;
+        player1Name.classList.contains("currentPlayer") ? currentPlayer = player1 : currentPlayer = player2;
     }
 
     const showCurrentPlayer = () => {
