@@ -1,8 +1,11 @@
 # TicTacToe with Minimax algorithm
 
-![gif showing tictactoe](https://github.com/Godnoken/gifdemos/blob/main/tictactoe.gif);
+![gif showing tictactoe](https://github.com/Godnoken/gifdemos/blob/main/tictactoe.gif)
 
-## Tech used
+### Live
+https://godnoken.github.io/tictactoe/
+
+## Techs used
 HTML, CSS, JavaScript, GSAP.
 
 ## Features
