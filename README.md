@@ -12,7 +12,7 @@ HTML, CSS, JavaScript, GSAP.
 Animated background with randomly generated SVG rects and GSAP.<br>
 Player vs Player.<br>
 Player vs Bot with several difficulties, including an unbeatable bot created with the minimax algorithm.<br>
-Custom names and markers.
+Custom names and markers.<br>
 Mobile responsive.
 
 ## What did I learn?
